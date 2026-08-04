@@ -1,0 +1,20 @@
+{
+  "name": "occam-review",
+  "interface": {
+    "displayName": "Occam Review"
+  },
+  "plugins": [
+    {
+      "name": "occam-review",
+      "source": {
+        "source": "local",
+        "path": "./plugins/occam-review"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "name": "occam-review",
+  "version": "0.1.0",
+  "description": "Deletion-focused simplicity and necessity review for implementation plans and code changes.",
+  "author": {
+    "name": "mindorigin150",
+    "url": "https://github.com/mindorigin150"
+  },
+  "repository": "https://github.com/mindorigin150/occam-review",
+  "license": "MIT",
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Occam Review",
+    "shortDescription": "Review plans and changes for unnecessary complexity.",
+    "longDescription": "Audit implementation plans and code changes for removable abstractions, dead public surface, redundant validation, and unneeded compatibility layers.",
+    "developerName": "mindorigin150",
+    "category": "Productivity",
+    "capabilities": [],
+    "defaultPrompt": [
+      "Review this implementation for unnecessary complexity after checking correctness."
+    ]
+  }
+}
