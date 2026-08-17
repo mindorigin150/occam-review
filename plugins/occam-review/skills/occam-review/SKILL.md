@@ -1,6 +1,6 @@
 ---
 name: occam-review
-description: Audit implementation plans, code changes, staged diffs, and refactors for unnecessary abstractions, dead public or wire surface, redundant defensive validation, silent configuration fallbacks, unjustified local imports, missing responsibility documentation, compatibility aliases without real consumers, and tests that manufacture demand. Use before implementation to constrain the design and before staging, committing, or completing a code review to run a deletion-focused simplicity and readability pass in addition to correctness review.
+description: Audit implementation plans, code changes, staged diffs, and refactors for unnecessary abstractions, dead public or wire surface, redundant defensive validation, silent configuration fallbacks, unjustified local imports, missing responsibility documentation, compatibility aliases without real consumers, unnecessary checksums, and tests that manufacture demand or pollute shared suites. Use before implementation to constrain the design and before staging, committing, or completing a code review to run a deletion-focused simplicity and readability pass in addition to correctness review.
 ---
 
 # Occam Review
@@ -53,7 +53,11 @@ Review the index and the complete implementation context:
    - function-local or repeated imports without an optional-dependency,
      import-cycle, or material startup-cost reason;
    - public classes with no concise responsibility docstring;
-   - comments that narrate syntax instead of explaining a decision or invariant.
+   - comments that narrate syntax instead of explaining a decision or invariant;
+   - checksum or digest work without a protocol, security, cache, reproducibility,
+     or user requirement;
+   - tests whose lifecycle, owner, contract, or final location is not stated;
+   - feature tests added to a shared suite without a system-level contract.
 5. Check unstaged modules before calling an interface speculative.
 6. Treat an explicitly approved requirement or architectural boundary as
    current demand. Check each method and field against the behavior that the
@@ -90,6 +94,26 @@ ownership, and path containment are typical reasons to keep a check.
 Python annotations do not validate external data. Never remove boundary checks
 merely because a signature says `int`, `str`, or `Mapping`.
 
+## Integrity Evidence Rule
+
+Do not add SHA-256, MD5, or another cryptographic digest by default. A local
+code change does not need a hash merely to show that a file changed, to reassure
+the reviewer, or to duplicate `git diff`, an existing build check, or a test.
+
+Keep a digest only when a current consumer or an explicit requirement needs it:
+
+- an external protocol or release process specifies a checksum;
+- a real security or integrity trust boundary needs verification;
+- content-addressed storage, cache identity, or reproducible builds consume it;
+- the user explicitly requires artifact identity or content verification.
+
+Before keeping one, record the consumer, the threat or consistency model, and
+where the digest is checked. Reuse an existing mechanism and calculate it once
+at that boundary. Do not add checksum files, scripts, dependencies, public
+fields, or cross-layer plumbing for a one-off review signal. If no current
+consumer or explicit requirement exists, classify the digest as `delete` and
+use the smallest existing evidence instead.
+
 ## Configuration Rule
 
 Fail loudly when required configuration is absent, misspelled, or malformed.
@@ -125,6 +149,21 @@ invariants at a public API or meaningful module boundary. Prefer black-box
 tests over assertions about private helpers, call sequences, intermediate
 representations, branch structure, or incidental metadata.
 
+Classify each new test before committing it:
+
+- `temporary probe`: an exploratory or implementation-guidance test for the
+  current feature. Keep it local or uncommitted when possible, and remove it
+  once the implementation is understood. It is not a production consumer.
+- `long-lived contract`: a test for an accepted product behavior, stable public
+  interface, real regression, cross-module invariant, or security boundary.
+  Commit it at the narrowest responsible module or existing suite.
+
+Feature-specific does not mean temporary: a feature test is long-lived when
+the feature behavior is an ongoing product promise. Conversely, coverage goals,
+future usefulness, or mirroring every implementation branch do not justify a
+long-lived test. Every committed test must name its requirement, regression,
+or invariant, its owner, and its retention class.
+
 A complex internal component may be tested directly when it owns an independent
 semantic contract. Exercise that contract end to end (for example, source text
 to parsed result or explicit rejection), not its implementation steps.
@@ -140,6 +179,12 @@ Retain a realistic fixture when an in-memory mock cannot exercise the boundary
 under test, such as process crashes, pipe EOF, stderr draining, timeouts, or
 process-group cleanup.
 
+Place tests beside the existing suite that owns the behavior. Use a global or
+system-level tests directory only for a genuine cross-module or end-to-end
+contract. Do not create a new shared test file for every feature, and do not
+leave temporary probes in the repository. Remove or merge a lower-boundary test
+when a higher-boundary test already covers the same risk with better diagnostics.
+
 ## Review Output
 
 Lead with actionable findings, ordered by deletion value and risk. For each,
@@ -149,6 +194,11 @@ provide:
 - exact evidence and current consumers;
 - the smaller replacement;
 - behavioral and test impact.
+
+For every checksum and new test, also report the requirement or consumer, the
+smallest valid alternative, and (for tests) the lifecycle class and responsible
+suite. Flag an unneeded digest for deletion, a temporary probe for cleanup, and
+a long-lived test in the wrong suite for relocation or merge.
 
 Explicitly list apparently speculative entities that must stay because the
 complete implementation already consumes them. If no actionable simplicity

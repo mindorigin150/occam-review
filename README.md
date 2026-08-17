@@ -3,7 +3,23 @@
 `occam-review` is a Codex skill for reviewing implementation plans and code
 changes after correctness review. It identifies unnecessary abstractions, dead
 public surface, redundant validation, silent configuration fallbacks, and
-compatibility layers without current consumers.
+compatibility layers without current consumers. It also rejects checksum work
+without a real integrity consumer and separates temporary test probes from
+long-lived product contracts.
+
+## News
+
+### 0.1.1 - 2026-08-17
+
+- Added a default-deny rule for SHA-256 and other checksums unless a protocol,
+  security boundary, cache, reproducible-build requirement, or user request
+  needs them.
+- Added `temporary probe` and `long-lived contract` test classifications.
+- Added test ownership, retention, and placement checks to prevent feature
+  work from polluting shared test suites.
+
+For future updates, add the newest version first and record the changed
+principles, their user-visible effect, and any compatibility impact.
 
 The repository distributes the skill as an instruction-only Codex plugin. It
 does not install an MCP server, hooks, or executable scripts.
