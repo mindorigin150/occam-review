@@ -1,6 +1,6 @@
 ---
 name: occam-review
-description: Audit implementation plans, code changes, staged diffs, and refactors for unnecessary abstractions, dead public or wire surface, redundant defensive validation, silent configuration fallbacks, unjustified local imports, missing responsibility documentation, compatibility aliases without real consumers, unnecessary checksums, and tests that manufacture demand or pollute shared suites. Use before implementation to constrain the design and before staging, committing, or completing a code review to run a deletion-focused simplicity and readability pass in addition to correctness review.
+description: Audit implementation plans, code changes, staged diffs, and refactors for unnecessary abstractions, dead public or wire surface, redundant defensive validation, silent configuration fallbacks, unjustified local imports, missing responsibility documentation, compatibility aliases without real consumers, unnecessary checksums, semantic residue from rejected scope, and tests that manufacture demand or pollute shared suites. Use before implementation to constrain the design and before staging, committing, or completing a code review to run a deletion-focused simplicity, scope-fidelity, and readability pass in addition to correctness review.
 ---
 
 # Occam Review
@@ -31,6 +31,34 @@ An explicitly accepted requirement or architecture decision is current demand
 even before its first production caller lands. Record that decision as the
 consumer and judge whether each member is necessary to satisfy it. Do not
 silently replace product intent with repository call-counting.
+
+## Scope Fidelity and Negative-Space Residue
+
+Keep the implementation faithful to the user's current request and any later
+scope corrections. Record the requested behavior and mark unrequested adjacent
+features as `delete`, even when they appear convenient, related, or likely to
+be useful later. A new test, name, comment, example, or explanation does not
+create demand for the feature it describes.
+
+When a scope correction rejects an addition, inspect the complete diff and all
+related artifacts for semantic residue from that addition, including:
+
+- public or wire names, fields, configuration, branches, dependencies, and
+  generated output;
+- fixtures, tests, test names, comments, docstrings, documentation, examples,
+  and change summaries or pull-request text.
+
+Delete residue such as `without X`, `no X`, or `excluding X` labels and
+explanations when the rejected concept is not part of the current contract.
+Rewrite the remaining surface around the requested positive behavior. Do not
+make the rejected scope item the title, identifier, test theme, or explanatory
+through-line of the change.
+
+Retain a negative constraint only when it is itself required by the current
+request, a mandatory invariant, a security or ownership boundary, an explicit
+compatibility contract, or a real regression test. Record the requirement or
+consumer that makes the constraint necessary; otherwise classify it as
+`delete`.
 
 ## Pre-Stage Gate
 
@@ -199,6 +227,11 @@ For every checksum and new test, also report the requirement or consumer, the
 smallest valid alternative, and (for tests) the lifecycle class and responsible
 suite. Flag an unneeded digest for deletion, a temporary probe for cleanup, and
 a long-lived test in the wrong suite for relocation or merge.
+
+Do not let a rejected scope item become the theme of the review. Mention it
+only as concise evidence of removed behavior or residual cleanup, unless the
+negative constraint is itself a current requirement, invariant, security or
+ownership boundary, compatibility contract, or real regression test.
 
 Explicitly list apparently speculative entities that must stay because the
 complete implementation already consumes them. If no actionable simplicity

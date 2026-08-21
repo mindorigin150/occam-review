@@ -1,7 +1,7 @@
 {
   "name": "occam-review",
-  "version": "0.1.1",
-  "description": "Deletion-focused simplicity review with checksum and test-scope discipline.",
+  "version": "0.1.2",
+  "description": "Deletion-focused simplicity review with scope-fidelity, semantic-residue, checksum, and test-scope discipline.",
   "author": {
     "name": "mindorigin150",
     "url": "https://github.com/mindorigin150"
@@ -12,13 +12,14 @@
   "interface": {
     "displayName": "Occam Review",
     "shortDescription": "Review plans and changes for unnecessary complexity.",
-    "longDescription": "Audit implementation plans and code changes for removable abstractions, dead public surface, redundant validation, unneeded compatibility layers, unnecessary checksums, and test-suite sprawl.",
+    "longDescription": "Audit implementation plans and code changes for removable abstractions, dead public surface, scope drift, semantic residue from rejected features, redundant validation, unneeded compatibility layers, unnecessary checksums, and test-suite sprawl.",
     "developerName": "mindorigin150",
     "category": "Productivity",
     "capabilities": [],
     "defaultPrompt": [
       "Review this implementation for unnecessary complexity after checking correctness.",
-      "Check whether these checksums and tests have real long-term consumers."
+      "Check whether these checksums and tests have real long-term consumers.",
+      "Check scope fidelity and remove semantic residue from rejected adjacent features, including leftover 'without X' wording."
     ]
   }
 }
